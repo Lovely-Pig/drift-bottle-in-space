@@ -21,6 +21,9 @@ try:
     # 执行MySQL语句
     cursor.execute(sql)
 
+    data = cursor.fetchone()
+    print(data)
+
     # 提交到数据库执行
     db.commit()
 
