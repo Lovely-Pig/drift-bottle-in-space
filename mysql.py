@@ -1,7 +1,9 @@
+from typing import Tuple
 import pymysql
 import prettytable as pt
 
-def select_all(table='test'):
+
+def run(table, sql):
     # 打开数据库连接
     db = pymysql.connect(
         host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com',
@@ -14,10 +16,6 @@ def select_all(table='test'):
     # 创建cursor对象
     cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
 
-    sql = f'''
-        SELECT * FROM {table};
-    '''
-
     try:
         # 执行MySQL语句
         cursor.execute(sql)
@@ -28,14 +26,12 @@ def select_all(table='test'):
 
         # 打印结果
         tb = pt.PrettyTable()
-
         tb.field_names = [field for field, value in results[0].items()]
-
         for i, result in enumerate(results):
             results[i] = [value for field, value in result.items()]
 
         tb.add_rows(results)
-        print(tb)
+        print(tb.get_string(title=table))
 
         # 提交到数据库执行
         db.commit()
@@ -47,5 +43,25 @@ def select_all(table='test'):
     # 关闭数据库连接
     db.close()
 
+
+def select_all(table):
+    # MySQL语句
+    sql = f'''
+        SELECT * FROM {table};
+    '''
+
+    run(table, sql)
+
+
+def insert(table, fiels: Tuple, values: Tuple):
+    # MySQL语句
+    sql = f'''
+        INSERT INTO {table} {fiels} VALUES {values};
+    '''
+
+    run(table, sql)
+
+
 if __name__ == '__main__':
-    select_all()
+    select_all(table='test')
+    insert(table='test', fiels=(test_title, test_date), values=("测试", NOW()))
