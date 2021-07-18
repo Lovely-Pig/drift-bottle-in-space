@@ -1,2 +1,3 @@
 wechaty
 PyMySQL
+prettytable
