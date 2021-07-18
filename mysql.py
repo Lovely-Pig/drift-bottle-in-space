@@ -14,7 +14,7 @@ db = pymysql.connect(
 cursor = db.cursor()
 
 sql = '''
-    SHOW TABLES;
+    DESC test;
 '''
 
 try:
