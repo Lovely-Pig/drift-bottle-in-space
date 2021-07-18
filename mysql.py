@@ -116,9 +116,9 @@ class MySQL():
 if __name__ == '__main__':
     host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com'
     user='lovely_pig'
-    password='xu164D1'
+    password='xu164D1='
     database='drift-bottle-in-space'
     my_sql = MySQL(host, user, password, database)
     my_sql.table_info(table='test')
     my_sql.select_all(table='test')
-    my_sql.insert(table='test', fiels='(test_title, test_date)', values='("测试", NOW())')
+    my_sql.insert(table='test', fiels='(test_title, test_date)', values='("再次测试", NOW())')
