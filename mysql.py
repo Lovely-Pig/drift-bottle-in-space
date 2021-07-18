@@ -20,8 +20,7 @@ def select_all(table='test'):
 
     try:
         # 执行MySQL语句
-        result = cursor.execute(sql)
-        print(result)
+        cursor.execute(sql)
 
         # 获取所有结果
         results = cursor.fetchall()
@@ -29,8 +28,13 @@ def select_all(table='test'):
 
         # 打印结果
         tb = pt.PrettyTable()
-        # tb.field_names = ['id', 'name']
-        table.add_rows(results)
+
+        tb.field_names = [field for field, value in results[0].items()]
+
+        for i, result in enumerate(results):
+            results[i] = [value for field, value in result.items()]
+
+        tb.add_rows(results)
         print(tb)
 
         # 提交到数据库执行
