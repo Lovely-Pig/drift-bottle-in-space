@@ -21,6 +21,9 @@ def run(table, sql):
         # 执行MySQL语句
         cursor.execute(sql)
 
+        # 提交到数据库执行
+        db.commit()
+
         # 获取所有结果
         results = cursor.fetchall()
         print('results:', results)
@@ -33,9 +36,6 @@ def run(table, sql):
 
         tb.add_rows(results)
         print(tb.get_string(title=table))
-
-        # 提交到数据库执行
-        db.commit()
 
     except:
         # 如果发生错误则回滚
