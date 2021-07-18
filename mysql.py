@@ -53,14 +53,15 @@ class MySQL():
             results = cursor.fetchall()
             print('results:', results)
 
-            # 打印结果
-            tb = pt.PrettyTable()
-            tb.field_names = [field for field, value in results[0].items()]
-            for i, result in enumerate(results):
-                results[i] = [value for field, value in result.items()]
+            if results:
+                # 打印结果
+                tb = pt.PrettyTable()
+                tb.field_names = [field for field, value in results[0].items()]
+                for i, result in enumerate(results):
+                    results[i] = [value for field, value in result.items()]
 
-            tb.add_rows(results)
-            print(tb.get_string(title=table))
+                tb.add_rows(results)
+                print(tb.get_string(title=table))
 
         except Exception as e:
             # 如果发生错误则回滚
