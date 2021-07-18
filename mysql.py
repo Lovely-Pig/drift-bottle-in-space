@@ -21,8 +21,15 @@ try:
     # 执行MySQL语句
     cursor.execute(sql)
 
+    # 获取所有结果
     results = cursor.fetchall()
-    print(results)
+
+    # 打印结果
+    for result in results:
+        for data in result:
+            print(data, end='\t')
+
+        print()
 
     # 提交到数据库执行
     db.commit()
