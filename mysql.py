@@ -20,7 +20,8 @@ def select_all(table='test'):
 
     try:
         # 执行MySQL语句
-        cursor.execute(sql)
+        result = cursor.execute(sql)
+        print(result)
 
         # 获取所有结果
         results = cursor.fetchall()
