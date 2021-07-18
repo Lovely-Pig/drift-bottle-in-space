@@ -15,6 +15,7 @@ def run(table, sql):
 
     # 创建cursor对象
     cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
+    print('sql:', sql)
 
     try:
         # 执行MySQL语句
@@ -22,7 +23,7 @@ def run(table, sql):
 
         # 获取所有结果
         results = cursor.fetchall()
-        print(results)
+        print('results:', results)
 
         # 打印结果
         tb = pt.PrettyTable()
