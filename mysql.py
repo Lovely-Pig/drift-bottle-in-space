@@ -28,7 +28,7 @@ class MySQL():
             print(e)
 
 
-    def _run(self, table, sql):
+    def _run(self, table, sql, msg=''):
         # 打开数据库连接
         db = pymysql.connect(
             host=self.host,
@@ -61,6 +61,8 @@ class MySQL():
                     results[i] = [value for field, value in result.items()]
 
                 tb.add_rows(results)
+                if msg:
+                    print(msg)
                 print(tb.get_string(title=table))
 
         except Exception as e:
@@ -74,7 +76,7 @@ class MySQL():
             db.close()
 
 
-    def table_info(self, table):
+    def table_info(self, table, msg=''):
         if not self.is_connect:
             print(self.wrong_msg)
 
@@ -83,11 +85,13 @@ class MySQL():
             sql = f'''
                 DESC {table};
             '''
+            if not msg:
+                msg = '数据表的信息如下：'
 
-            self._run(table, sql)
+            self._run(table, sql, msg)
 
 
-    def select_all(self, table):
+    def select_all(self, table, msg=''):
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -96,11 +100,13 @@ class MySQL():
             sql = f'''
                 SELECT * FROM {table};
             '''
+            if not msg:
+                msg = '数据表查询成功😊，全部数据如下：'
 
-            self._run(table, sql)
+            self._run(table, sql, msg)
 
 
-    def insert(self, table, fiels, values):
+    def insert(self, table, fiels, values, msg=''):
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -109,9 +115,11 @@ class MySQL():
             sql = f'''
                 INSERT INTO {table} {fiels} VALUES {values};
             '''
+            if not msg:
+                msg = '数据插入成功😊，全部数据如下：'
 
             self._run(table, sql)
-            self.select_all(table)
+            self.select_all(table, msg)
 
 
 if __name__ == '__main__':
@@ -122,4 +130,4 @@ if __name__ == '__main__':
     my_sql = MySQL(host, user, password, database)
     my_sql.table_info(table='test')
     my_sql.select_all(table='test')
-    my_sql.insert(table='test', fiels='(test_title, test_date)', values='("再次测试", NOW())')
+    my_sql.insert(table='test', fiels='(test_title, test_date)', values='("测试", NOW())')
