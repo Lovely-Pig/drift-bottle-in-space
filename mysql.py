@@ -44,6 +44,14 @@ def run(table, sql):
     db.close()
 
 
+def table_info(table):
+    # MySQL语句
+    sql = f'''
+        DESC {table};
+    '''
+
+    run(table, sql)
+
 def select_all(table):
     # MySQL语句
     sql = f'''
@@ -53,7 +61,7 @@ def select_all(table):
     run(table, sql)
 
 
-def insert(table, fiels: Tuple, values: Tuple):
+def insert(table, fiels, values):
     # MySQL语句
     sql = f'''
         INSERT INTO {table} {fiels} VALUES {values};
@@ -63,5 +71,7 @@ def insert(table, fiels: Tuple, values: Tuple):
 
 
 if __name__ == '__main__':
+    table_info(table='test')
     select_all(table='test')
-    insert(table='test', fiels=(test_title, test_date), values=("测试", NOW()))
+    insert(table='test', fiels='(test_title, test_date)', values='("测试", NOW())')
+    select_all(table='test')
