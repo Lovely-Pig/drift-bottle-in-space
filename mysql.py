@@ -120,6 +120,38 @@ class MySQL():
 
             self._run(table, sql)
             self.select_all(table, msg)
+    
+
+    def update(self, table, content, condition, msg=''):
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                UPDATE {table} SET {content} WHERE {condition};
+            '''
+            if not msg:
+                msg = '数据修改成功😊，全部数据如下：'
+
+            self._run(table, sql)
+            self.select_all(table, msg)
+    
+
+    def delete(self, table, condition, msg=''):
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                DELETE FROM {table} WHERE {condition};
+            '''
+            if not msg:
+                msg = '数据删除成功😊，全部数据如下：'
+
+            self._run(table, sql)
+            self.select_all(table, msg)
 
 
 if __name__ == '__main__':
@@ -131,3 +163,5 @@ if __name__ == '__main__':
     my_sql.table_info(table='test')
     my_sql.select_all(table='test')
     my_sql.insert(table='test', fiels='(test_title, test_date)', values='("测试", NOW())')
+    my_sql.update(table='test', content='test_title="学习Python"', condition='test_id=7')
+    my_sql.delete(table='test', condition='test_id=8')
