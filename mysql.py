@@ -8,6 +8,7 @@ class MySQL():
         self.user = user
         self.password = password
         self.database = database
+        self.wrong_msg = '数据库连接失败😭，请检查连接'
         try:
             # 检查数据库连接是否成功
             db = pymysql.connect(
@@ -21,9 +22,10 @@ class MySQL():
             self.is_connect = True
             print('数据库连接成功😊')
         
-        except:
+        except Exception as e:
             self.is_connect = False
             print('数据库连接失败😭')
+            print(e)
 
 
     def _run(self, table, sql):
@@ -60,47 +62,61 @@ class MySQL():
             tb.add_rows(results)
             print(tb.get_string(title=table))
 
-        except:
+        except Exception as e:
             # 如果发生错误则回滚
             db.rollback()
+            print(e)
 
-        # 关闭数据库连接
-        cursor.close()
-        db.close()
+        finally:
+            # 关闭数据库连接
+            cursor.close()
+            db.close()
 
 
     def table_info(self, table):
-        # MySQL语句
-        sql = f'''
-            DESC {table};
-        '''
+        if not self.is_connect:
+            print(self.wrong_msg)
 
-        self._run(table, sql)
+        else:
+            # MySQL语句
+            sql = f'''
+                DESC {table};
+            '''
+
+            self._run(table, sql)
 
 
     def select_all(self, table):
-        # MySQL语句
-        sql = f'''
-            SELECT * FROM {table};
-        '''
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                SELECT * FROM {table};
+            '''
 
-        self._run(table, sql)
+            self._run(table, sql)
 
 
     def insert(self, table, fiels, values):
-        # MySQL语句
-        sql = f'''
-            INSERT INTO {table} {fiels} VALUES {values};
-        '''
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                INSERT INTO {table} {fiels} VALUES {values};
+            '''
 
-        self._run(table, sql)
-        self.select_all(table)
+            self._run(table, sql)
+            self.select_all(table)
 
 
 if __name__ == '__main__':
     host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com'
     user='lovely_pig'
-    password='xu164D1='
+    password='xu164D1'
     database='drift-bottle-in-space'
     my_sql = MySQL(host, user, password, database)
     my_sql.table_info(table='test')
