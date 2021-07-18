@@ -12,7 +12,7 @@ def select_all(table='test'):
     )
 
     # 创建cursor对象
-    cursor = db.cursor()
+    cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
 
     sql = f'''
         SELECT * FROM {table};
