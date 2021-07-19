@@ -38,7 +38,7 @@ class MySQL():
             charset='utf8'
         )
 
-        results = []
+        _results = []
 
         # 创建cursor对象
         cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
@@ -53,6 +53,7 @@ class MySQL():
 
             # 获取所有结果
             results = cursor.fetchall()
+            _results = results
             print('results:', results)
 
             if results:
@@ -77,7 +78,7 @@ class MySQL():
             cursor.close()
             db.close()
         
-        return results
+        return _results
 
 
     def table_info(self, table, msg=''):
