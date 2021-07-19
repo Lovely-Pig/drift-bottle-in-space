@@ -124,6 +124,8 @@ class MySQL():
 
             # 获取漂流瓶的文本和图片信息
             results = self._run(table, sql, msg)
+            print('type(results):', type(results))
+            print('results:', results)
             msg = results[0]['message']
             img = results[0]['image']
 
