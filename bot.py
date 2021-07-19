@@ -107,7 +107,7 @@ class MyBot(Wechaty):
                     await conversation.say('正在尝试接收太空漂流瓶，请稍等.......')
                     bottle_msg, bottle_img = self.db.get_bottle(
                         table='bottles_dev',
-                        field='visited'
+                        field='visited, add_time'
                     )
                     time.sleep(1)
                     await conversation.say('接收到一个太空漂流瓶')
