@@ -38,6 +38,8 @@ class MySQL():
             charset='utf8'
         )
 
+        results = []
+
         # 创建cursor对象
         cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
         print('sql:', sql)
@@ -74,6 +76,8 @@ class MySQL():
             # 关闭数据库连接
             cursor.close()
             db.close()
+        
+        return results
 
 
     def table_info(self, table, msg=''):
@@ -104,6 +108,31 @@ class MySQL():
                 msg = '数据表查询成功😊，全部数据如下：'
 
             self._run(table, sql, msg)
+    
+
+    def get_bottle(self, table, field, msg=''):
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                SELECT * FROM {table} ORDER BY {field} ASC;
+            '''
+            if not msg:
+                msg = '数据表排序成功😊，全部数据如下：'
+
+            # 获取漂流瓶的文本和图片信息
+            results = self._run(table, sql, msg)
+            msg = results[0]['message']
+            img = results[0]['image']
+
+            # 修改漂流瓶的访问次数
+            id = results[0]['id']
+            visited = results[0]['visited']
+            self.update(table, content=f'visited={visited + 1}', condition=f'id={id}')
+
+            return msg, img
 
 
     def insert(self, table, fiels, values, msg=''):
