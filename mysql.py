@@ -120,7 +120,7 @@ class MySQL():
         else:
             # MySQL语句
             sql = f'''
-                SELECT * FROM {table} ORDER BY {field} ASC;
+                SELECT * FROM {table} ORDER BY {field};
             '''
             if not msg:
                 msg = '数据表排序成功😊，全部数据如下：'
