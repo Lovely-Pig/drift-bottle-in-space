@@ -77,8 +77,11 @@ class MyBot(Wechaty):
                         table='bottles_dev',
                         field='visited'
                     )
+                    time.sleep(1)
                     await conversation.say('接收到一个太空漂流瓶')
+                    time.sleep(1)
                     await conversation.say('文本内容：' + bottle_msg)
+                    time.sleep(1)
                     await conversation.say('图片内容：' + bottle_img)
 
                 if text == '图片':
