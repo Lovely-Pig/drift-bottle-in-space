@@ -112,7 +112,8 @@ class MyBot(Wechaty):
                     time.sleep(1)
                     await conversation.say('接收到一个太空漂流瓶')
                     time.sleep(1)
-                    await conversation.say(bottle_msg)
+                    if bottle_msg:
+                        await conversation.say(bottle_msg)
                     time.sleep(1)
                     if bottle_img:
                         file_box = FileBox.from_file(path=bottle_img)
