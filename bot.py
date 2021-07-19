@@ -1,4 +1,5 @@
 import time
+import mysql
 import asyncio
 import logging
 from typing import Optional, Union
@@ -22,6 +23,12 @@ class MyBot(Wechaty):
         self.hello_msg = '嗨，别来无恙啊，此刻的你是否有些孤独，别怕，此时此刻，在浩瀚宇宙中，总有与你相似的灵魂，你们或许来自不同的星球，有着不同的文明，但你们仍然可以通过太空漂流瓶去表达内心的情感，快来开启你的太空漂流瓶之旅吧......'
         self.bottle_msg = '在六十世纪，地球已不再适合人类生存，人们不得不生活在一个又一个太空飞船里，在宇宙中遨游，而同样遨游的还有各种各样的外星生物，太空漂流瓶是宇宙中交流的唯一途径，它承载着一些情感，在无边的宇宙中漂流，有些漂流瓶很幸运，会被某个有趣的灵魂收到，而有些漂流瓶则可能永远漂流在宇宙中。'
         self.on_bottle_ready = False
+        self.db = mysql.MySQL(
+            host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com',
+            user='lovely_pig',
+            password='xu164D1=',
+            database='drift-bottle-in-space'
+        )
 
     async def on_message(self, msg: Message):
         """
@@ -50,6 +57,11 @@ class MyBot(Wechaty):
                     await conversation.say('接收到信息，正在准备漂流瓶')
                     time.sleep(1)
                     await conversation.say('消息内容：' + text)
+                    self.db.insert(
+                        table='bottles_dev',
+                        fiels='(species, owner, message, image)',
+                        values=f'("human", {from_contact.name}, {text}, "")'
+                    )
                     
                 if text == '1':
                     conversation = from_contact
