@@ -108,7 +108,9 @@ class MySQL():
             if not msg:
                 msg = '数据表查询成功😊，全部数据如下：'
 
-            self._run(table, sql, msg)
+            results = self._run(table, sql, msg)
+
+            return results
     
 
     def get_bottle(self, table, field, msg=''):
@@ -125,20 +127,18 @@ class MySQL():
 
             # 获取漂流瓶的文本和图片信息
             results = self._run(table, sql, msg)
-            print('type(results):', type(results))
-            print('results:', results)
-            msg = results[0]['message']
-            img = results[0]['image']
+            message = results[0]['message']
+            image = results[0]['image']
 
             # 修改漂流瓶的访问次数
             id = results[0]['id']
             visited = results[0]['visited']
             self.update(table, content=f'visited={visited + 1}', condition=f'id={id}')
 
-            return msg, img
+            return message, image
+    
 
-
-    def insert(self, table, fiels, values, msg=''):
+    def insert1(self, table, fiels, values, msg=''):
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -152,6 +152,27 @@ class MySQL():
 
             self._run(table, sql)
             self.select_all(table, msg)
+
+
+    def insert2(self, table, fiels, values, msg=''):
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                INSERT INTO {table} {fiels} VALUES {values};
+            '''
+            if not msg:
+                msg = '数据插入成功😊，全部数据如下：'
+
+            self._run(table, sql)
+            results = self.select_all(table)
+            id = results[-1]['id']
+            image = str(id) + '.jpg'
+            self.update(table, content=f'image="{image}"', condition=f'id={id}', msg=msg)
+
+            return image
     
 
     def update(self, table, content, condition, msg=''):
