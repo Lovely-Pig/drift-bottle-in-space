@@ -1,3 +1,4 @@
+import os
 import oss
 import time
 import mysql
@@ -21,14 +22,12 @@ class MyBot(Wechaty):
     """
     def __init__(self):
         super().__init__()
+        self.sleep_time = 2
         self.hello_msg = '嗨，别来无恙啊，此刻的你是否有些孤独，别怕，此时此刻，在浩瀚宇宙中，总有与你相似的灵魂，你们或许来自不同的星球，有着不同的文明，但你们仍然可以通过太空漂流瓶去表达内心的情感，快来开启你的太空漂流瓶之旅吧......'
         self.bottle_msg = '在六十世纪，地球已不再适合人类生存，人们不得不生活在一个又一个太空飞船里，在宇宙中遨游，而同样遨游的还有各种各样的外星生物，太空漂流瓶是宇宙中交流的唯一途径，它承载着一些情感，在无边的宇宙中漂流，有些漂流瓶很幸运，会被某个有趣的灵魂收到，而有些漂流瓶则可能永远漂流在宇宙中。'
         self.on_bottle_msg_ready = False
         self.on_bottle_img_ready = False
         self.send_bottle_msg = ''
-        self.send_bottle_img = ''
-        self.get_bottle_msg = ''
-        self.get_bottle_img = ''
         self.db = mysql.MySQL(
             host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com',
             user='lovely_pig',
@@ -60,7 +59,7 @@ class MyBot(Wechaty):
                     conversation = from_contact
                     await conversation.ready()
                     await conversation.say(self.hello_msg)
-                    time.sleep(1)
+                    time.sleep(self.sleep_time)
                     await conversation.say('发送太空漂流瓶请回复1，接收太空漂流瓶请回复2。')
                 
                 if text == '不用了' and self.on_bottle_img_ready:
@@ -72,6 +71,7 @@ class MyBot(Wechaty):
                         fiels='(species, owner, message, image)',
                         values=f'("human", "{conversation.name}", "{self.send_bottle_msg}", "")'
                     )
+                    time.sleep(self.sleep_time)
                     await conversation.say('发送成功🎉🎉🎉')
 
                 if type == Message.Type.MESSAGE_TYPE_IMAGE and self.on_bottle_img_ready:
@@ -86,6 +86,8 @@ class MyBot(Wechaty):
                     file_box = await msg.to_file_box()
                     await file_box.to_file(file_path=filename)
                     self.bucket.upload_img(filename=filename)
+                    os.remove(path=filename)
+                    time.sleep(self.sleep_time)
                     await conversation.say('发送成功🎉🎉🎉')
 
                 if self.on_bottle_msg_ready:
@@ -109,26 +111,18 @@ class MyBot(Wechaty):
                         table='bottles_dev',
                         field='visited, add_time'
                     )
-                    time.sleep(1)
+                    time.sleep(self.sleep_time)
                     await conversation.say('接收到一个太空漂流瓶')
-                    time.sleep(1)
+                    time.sleep(self.sleep_time)
                     if bottle_msg:
                         await conversation.say(bottle_msg)
-                    time.sleep(1)
+                    time.sleep(self.sleep_time)
                     if bottle_img:
+                        self.bucket.download_img(filename=bottle_img)
                         file_box = FileBox.from_file(path=bottle_img)
                         await conversation.say(file_box)
+                        os.remove(path=bottle_img)
 
-                if text == '图片':
-                    conversation = from_contact
-
-                    # 从网络上加载图片到file_box
-                    img_url = 'https://xx.jpg'
-                    file_box = FileBox.from_url(img_url, name='xx.jpg')
-                    
-                    await conversation.ready()
-                    await conversation.say('这是自动回复：')
-                    await conversation.say(file_box)
 
     async def on_login(self, contact: Contact):
         print(f'user: {contact} has login')
