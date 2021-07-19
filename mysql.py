@@ -53,7 +53,7 @@ class MySQL():
 
             # 获取所有结果
             results = cursor.fetchall()
-            _results = results
+            _results = results[:]
             print('results:', results)
 
             if results:
