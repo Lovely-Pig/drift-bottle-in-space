@@ -60,7 +60,7 @@ class MyBot(Wechaty):
                     self.db.insert(
                         table='bottles_dev',
                         fiels='(species, owner, message, image)',
-                        values=f'("human", "{from_contact.name}", "{text}", "")'
+                        values=f'("human", "{conversation.name}", "{text}", "")'
                     )
                     
                 if text == '1':
@@ -68,6 +68,18 @@ class MyBot(Wechaty):
                     self.on_bottle_ready = True
                     await conversation.ready()
                     await conversation.say('请编辑一条您要发送的信息。')
+
+                if text == '2':
+                    conversation = from_contact
+                    await conversation.ready()
+                    await conversation.say('正在尝试接收太空漂流瓶，请稍等.......')
+                    bottle_msg, bottle_img = self.db.get_bottle(
+                        table='bottles_dev',
+                        field='visited'
+                    )
+                    await conversation.say('接收到一个太空漂流瓶')
+                    await conversation.say('文本内容：' + bottle_msg)
+                    await conversation.say('图片内容：' + bottle_img)
 
                 if text == '图片':
                     conversation = from_contact
