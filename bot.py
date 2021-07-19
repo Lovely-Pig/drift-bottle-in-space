@@ -60,7 +60,7 @@ class MyBot(Wechaty):
                     self.db.insert(
                         table='bottles_dev',
                         fiels='(species, owner, message, image)',
-                        values=f'("human", {str(from_contact.name)}, {str(text)}, "")'
+                        values=f'("human", "{from_contact.name}", "{text}", "")'
                     )
                     
                 if text == '1':
