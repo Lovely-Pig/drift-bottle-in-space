@@ -2,6 +2,7 @@ import os
 import oss
 import time
 import mysql
+import strings
 import asyncio
 import logging
 from typing import Optional, Union
@@ -76,7 +77,7 @@ class MyBot(Wechaty):
                     self.db.insert1(
                         table='bottles_dev',
                         fiels='(species, owner, message, image)',
-                        values=f'("{self.species}", "{conversation.name}", "{self.send_bottle_msg}", "")'
+                        values=f'("{self.species}", "{conversation.name}", "{strings.check(self.send_bottle_msg)}", "")'
                     )
                     self.species = 'human'
                     time.sleep(self.sleep_time)
