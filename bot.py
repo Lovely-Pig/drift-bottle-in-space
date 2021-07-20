@@ -27,13 +27,16 @@ class MyBot(Wechaty):
         self.bottle_msg = '在六十世纪，地球已不再适合人类生存，人们不得不生活在一个又一个太空飞船里，在宇宙中遨游，而同样遨游的还有各种各样的外星生物，太空漂流瓶是宇宙中交流的唯一途径，它承载着一些情感，在无边的宇宙中漂流，有些漂流瓶很幸运，会被某个有趣的灵魂收到，而有些漂流瓶则可能永远漂流在宇宙中。'
         self.on_bottle_msg_ready = False
         self.on_bottle_img_ready = False
+        self.species = 'human'
         self.send_bottle_msg = ''
+        # 获取云数据库
         self.db = mysql.MySQL(
             host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com',
             user='lovely_pig',
             password='xu164D1=',
             database='drift-bottle-in-space'
         )
+        # 获取云存储
         self.bucket = oss.OSS(
             access_key_id='LTAI5tJ2PUZYmkHNn4eHpneZ',
             access_key_secret='0vGAt1YBjlS2VHFCyu9rFYaA62u758',
@@ -58,31 +61,40 @@ class MyBot(Wechaty):
                 if text == 'hi' or text == '你好':
                     conversation = from_contact
                     await conversation.ready()
-                    await conversation.say(self.hello_msg)
+                    time.sleep(self.sleep_time)
+                    await conversation.say(self.bottle_msg)
                     time.sleep(self.sleep_time)
                     await conversation.say('发送太空漂流瓶请回复1，接收太空漂流瓶请回复2。')
                 
+                # 只有文本信息
                 if text == '不用了' and self.on_bottle_img_ready:
                     conversation = from_contact
                     self.on_bottle_img_ready = False
-                    await conversation.say('好的，正在准备发送太空漂流瓶......')
+                    await conversation.ready()
+                    time.sleep(self.sleep_time)
+                    await conversation.say('好的，正在准备发送太空漂流瓶🛸......')
                     self.db.insert1(
                         table='bottles_dev',
                         fiels='(species, owner, message, image)',
-                        values=f'("human", "{conversation.name}", "{self.send_bottle_msg}", "")'
+                        values=f'("{self.species}", "{conversation.name}", "{self.send_bottle_msg}", "")'
                     )
+                    self.species = 'human'
                     time.sleep(self.sleep_time)
                     await conversation.say('发送成功🎉🎉🎉')
 
+                # 发送文本和图片信息
                 if type == Message.Type.MESSAGE_TYPE_IMAGE and self.on_bottle_img_ready:
                     conversation = from_contact
                     self.on_bottle_img_ready = False
-                    await conversation.say('好的，正在准备发送太空漂流瓶......')
+                    await conversation.ready()
+                    time.sleep(self.sleep_time)
+                    await conversation.say('好的，正在准备发送太空漂流瓶🛸......')
                     filename = self.db.insert2(
                         table='bottles_dev',
                         fiels='(species, owner, message, image)',
-                        values=f'("human", "{conversation.name}", "{self.send_bottle_msg}", "")'
+                        values=f'("{self.species}", "{conversation.name}", "{self.send_bottle_msg}", "")'
                     )
+                    self.species = 'human'
                     file_box = await msg.to_file_box()
                     await file_box.to_file(file_path=filename)
                     self.bucket.upload_img(filename=filename)
@@ -95,31 +107,43 @@ class MyBot(Wechaty):
                     self.on_bottle_msg_ready = False
                     self.on_bottle_img_ready = True
                     self.send_bottle_msg = text
-                    await conversation.say('配上一张精美的图片可以更好的表达哦，如不需要请回复不用了。')
+                    await conversation.ready()
+                    time.sleep(self.sleep_time)
+                    await conversation.say('配上一张精美的图片🖼可以更好的表达此刻的心情哦😉，如不需要请回复不用了。')
                     
                 if text == '1':
                     conversation = from_contact
                     self.on_bottle_msg_ready = True
                     await conversation.ready()
-                    await conversation.say('请编辑一条您要发送的信息。')
+                    time.sleep(self.sleep_time)
+                    await conversation.say('请编辑一条您要发送的信息📝')
+
+                if text == '1外星人':
+                    conversation = from_contact
+                    self.species = 'alien'
+                    self.on_bottle_msg_ready = True
+                    await conversation.ready()
+                    time.sleep(self.sleep_time)
+                    await conversation.say('您已开启伪装外星人模式，请编辑一条您要发送的信息📝')
 
                 if text == '2':
                     conversation = from_contact
                     await conversation.ready()
-                    await conversation.say('正在尝试接收太空漂流瓶，请稍等.......')
+                    time.sleep(self.sleep_time)
+                    await conversation.say('正在尝试接收📡太空漂流瓶🛸，请稍等.......')
                     bottle_msg, bottle_img = self.db.get_bottle(
                         table='bottles_dev',
                         field='visited, add_time'
                     )
                     time.sleep(self.sleep_time)
-                    await conversation.say('接收到一个太空漂流瓶')
-                    time.sleep(self.sleep_time)
+                    await conversation.say('接收到一个太空漂流瓶🛸')
                     if bottle_msg:
+                        time.sleep(self.sleep_time)
                         await conversation.say(bottle_msg)
-                    time.sleep(self.sleep_time)
                     if bottle_img:
                         self.bucket.download_img(filename=bottle_img)
                         file_box = FileBox.from_file(path=bottle_img)
+                        time.sleep(self.sleep_time)
                         await conversation.say(file_box)
                         os.remove(path=bottle_img)
 
