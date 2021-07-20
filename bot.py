@@ -2,6 +2,7 @@ import os
 import oss
 import time
 import mysql
+import random
 import strings
 import asyncio
 import logging
@@ -45,6 +46,7 @@ class MyBot(Wechaty):
             endpoint='https://oss-cn-beijing.aliyuncs.com',
         )
 
+
     async def on_message(self, msg: Message):
         """
         listen for message event
@@ -67,7 +69,7 @@ class MyBot(Wechaty):
                     time.sleep(self.sleep_time)
                     await conversation.say('发送太空漂流瓶请回复1，接收太空漂流瓶请回复2。')
                 
-                # 只有文本信息
+                # 只发送文本信息
                 if text == '不用了' and self.on_bottle_img_ready:
                     conversation = from_contact
                     self.on_bottle_img_ready = False
@@ -76,7 +78,7 @@ class MyBot(Wechaty):
                     await conversation.say('好的，正在准备发送太空漂流瓶🛸......')
                     self.db.insert1(
                         table='bottles_dev',
-                        fiels='(species, owner, message, image)',
+                        fields='(species, owner, message, image)',
                         values=f'("{self.species}", "{conversation.name}", "{strings.check(self.send_bottle_msg)}", "")'
                     )
                     self.species = 'human'
@@ -92,17 +94,18 @@ class MyBot(Wechaty):
                     await conversation.say('好的，正在准备发送太空漂流瓶🛸......')
                     filename = self.db.insert2(
                         table='bottles_dev',
-                        fiels='(species, owner, message, image)',
+                        fields='(species, owner, message, image)',
                         values=f'("{self.species}", "{conversation.name}", "{self.send_bottle_msg}", "")'
                     )
                     self.species = 'human'
                     file_box = await msg.to_file_box()
                     await file_box.to_file(file_path=filename)
-                    self.bucket.upload_img(filename=filename)
+                    self.bucket.upload_img(dirname='bottles_dev', filename=filename)
                     os.remove(path=filename)
                     time.sleep(self.sleep_time)
                     await conversation.say('发送成功🎉🎉🎉')
 
+                # 接收用户编辑的文本信息
                 if self.on_bottle_msg_ready:
                     conversation = from_contact
                     self.on_bottle_msg_ready = False
@@ -119,6 +122,7 @@ class MyBot(Wechaty):
                     time.sleep(self.sleep_time)
                     await conversation.say('请编辑一条您要发送的信息📝')
 
+                # 伪装外星人发送信息
                 if text == '1外星人':
                     conversation = from_contact
                     self.species = 'alien'
@@ -127,31 +131,39 @@ class MyBot(Wechaty):
                     time.sleep(self.sleep_time)
                     await conversation.say('您已开启伪装外星人模式，请编辑一条您要发送的信息📝')
 
+                # 接收漂流瓶
                 if text == '2':
                     conversation = from_contact
                     await conversation.ready()
                     time.sleep(self.sleep_time)
                     await conversation.say('正在尝试接收📡太空漂流瓶🛸，请稍等.......')
-                    bottle_msg, bottle_img = self.db.get_bottle(
-                        table='bottles_dev',
-                        field='visited, add_time'
-                    )
-                    time.sleep(self.sleep_time)
-                    await conversation.say('接收到一个太空漂流瓶🛸')
-                    await conversation.say(f'文本消息{"✅" if bottle_msg else "❎"} 图片消息{"✅" if bottle_img else "❎"}')
-                    if bottle_msg:
+                    # 50%的概率接收到漂流瓶
+                    num = random.randint(0, 9)
+                    if num < 5:
                         time.sleep(self.sleep_time)
-                        await conversation.say(bottle_msg)
-                    if bottle_img:
-                        self.bucket.download_img(filename=bottle_img)
-                        file_box = FileBox.from_file(path=bottle_img)
+                        await conversation.say('十分抱歉，飞船附近没有发现漂流瓶🛸')
+                    else:
+                        bottle_msg, bottle_img = self.db.get_bottle(
+                            table='bottles_dev',
+                            field='visited, add_time'
+                        )
                         time.sleep(self.sleep_time)
-                        await conversation.say(file_box)
-                        os.remove(path=bottle_img)
+                        await conversation.say('接收到一个太空漂流瓶🛸')
+                        await conversation.say(f'文本消息{"✅" if bottle_msg else "❎"} 图片消息{"✅" if bottle_img else "❎"}')
+                        if bottle_msg:
+                            time.sleep(self.sleep_time)
+                            await conversation.say(bottle_msg)
+                        if bottle_img:
+                            self.bucket.download_img(dirname='bottles_dev', filename=bottle_img)
+                            file_box = FileBox.from_file(path=bottle_img)
+                            time.sleep(self.sleep_time)
+                            await conversation.say(file_box)
+                            os.remove(path=bottle_img)
 
 
     async def on_login(self, contact: Contact):
         print(f'user: {contact} has login')
+
 
     async def on_scan(self, status: ScanStatus, qr_code: Optional[str] = None,
                       data: Optional[str] = None):
