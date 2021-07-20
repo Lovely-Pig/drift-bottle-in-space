@@ -66,6 +66,8 @@ class MyBot(Wechaty):
                     await conversation.say(self.bottle_msg)
                     time.sleep(self.sleep_time)
                     await conversation.say('发送太空漂流瓶请回复1，接收太空漂流瓶请回复2。')
+                    emoji = '<img class="emoji emoji1f63c" text="_web" src="/zh_CN/htmledition/v2/images/spacer.gif" />'
+                    await conversation.say(emoji)
                 
                 # 只有文本信息
                 if text == '不用了' and self.on_bottle_img_ready:
