@@ -1,9 +1,24 @@
+import os
 import pymysql
 import prettytable as pt
+from typing import Dict, List, Tuple
 
 
 class MySQL():
-    def __init__(self, host, user, password, database):
+    """
+    对数据库进行操作
+
+    用法 ::
+
+        >>> import mysql
+        >>> db = mysql.MySQL(
+                host='<your host>',
+                user='<your user>',
+                password='<your password>',
+                database='<your database>',
+            )
+    """
+    def __init__(self, host: str, user: str, password: str, database: str):
         self.host = host
         self.user = user
         self.password = password
@@ -28,7 +43,7 @@ class MySQL():
             print(e)
 
 
-    def _run(self, table, sql, msg=''):
+    def _run(self, table: str, sql: str, msg: str = '') -> List[Dict]:
         # 打开数据库连接
         db = pymysql.connect(
             host=self.host,
@@ -81,7 +96,17 @@ class MySQL():
         return _results
 
 
-    def table_info(self, table, msg=''):
+    def table_info(self, table: str, msg: str = ''):
+        """
+        查询表的结构
+        :param table: 数据表的名称
+        :param msg: 运行时打印的提示信息
+
+        用法 ::
+
+            >>> db.table_info(table='bottles_dev')
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
 
@@ -96,7 +121,18 @@ class MySQL():
             self._run(table, sql, msg)
 
 
-    def select_all(self, table, msg=''):
+    def select_all(self, table: str, msg: str = '') -> List[Dict]:
+        """
+        查询表的全部数据
+        :param table: 数据表的名称
+        :param msg: 运行时打印的提示信息
+        :return: 查询的结果
+
+        用法 ::
+
+            >>> db.select_all(table='bottles_dev')
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -113,7 +149,26 @@ class MySQL():
             return results
     
 
-    def get_bottle(self, table, field, msg=''):
+    def get_bottle(self, table: str, field: str, msg: str = '') -> Tuple[str]:
+        """
+        获取漂流瓶的信息
+        :param table: 数据表的名称
+        :param field: 字段名
+        :param msg: 运行时打印的提示信息
+        :return: 漂流瓶的文本信息, 漂流瓶的图片信息
+
+        用法 ::
+
+            >>> message, image = db.get_bottle(
+                    table='bottles_dev',
+                    field='visited, add_time'
+                )
+            >>> print('message:', message)
+            >>> print('image:', image)
+            message: 这是一条测试信息
+            image: 3.jpg
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -138,14 +193,30 @@ class MySQL():
             return message, image
     
 
-    def insert1(self, table, fiels, values, msg=''):
+    def insert1(self, table: str, fields: str, values: str, msg: str = '') -> None:
+        """
+        发送一个漂流瓶，只有文本信息
+        :param table: 数据表的名称
+        :param fields: 字段名
+        :param values: 值
+        :param msg: 运行时打印的提示信息
+
+        用法 ::
+
+            >>> db.insert1(
+                    table='bottles_dev',
+                    fields='(species, owner, message, image)',
+                    values='("human", "九月的海风", "这是一条测试信息", "")'
+                )
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
             
         else:
             # MySQL语句
             sql = f'''
-                INSERT INTO {table} {fiels} VALUES {values};
+                INSERT INTO {table} {fields} VALUES {values};
             '''
             if not msg:
                 msg = '数据插入成功😊，全部数据如下：'
@@ -154,14 +225,31 @@ class MySQL():
             self.select_all(table, msg)
 
 
-    def insert2(self, table, fiels, values, msg=''):
+    def insert2(self, table: str, fields: str, values: str, msg: str = '') -> str:
+        """
+        发送一个漂流瓶，包含文本信息和图片信息
+        :param table: 数据表的名称
+        :param fields: 字段名
+        :param values: 值
+        :param msg: 运行时打印的提示信息
+        :return: 图片名
+
+        用法 ::
+
+            >>> db.insert1(
+                    table='bottles_dev',
+                    fields='(species, owner, message, image)',
+                    values='("alien", "细菌", "这是另一条测试信息", "")'
+                )
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
             
         else:
             # MySQL语句
             sql = f'''
-                INSERT INTO {table} {fiels} VALUES {values};
+                INSERT INTO {table} {fields} VALUES {values};
             '''
             if not msg:
                 msg = '数据插入成功😊，全部数据如下：'
@@ -175,7 +263,23 @@ class MySQL():
             return image
     
 
-    def update(self, table, content, condition, msg=''):
+    def update(self, table: str, content: str, condition: str, msg: str = '') -> None:
+        """
+        更改数据的信息
+        :param table: 数据表的名称
+        :param content: 要更改的内容
+        :param condition: 查询的条件
+        :param msg: 运行时打印的提示信息
+
+        用法 ::
+
+            >>> db.update(
+                    table='bottles_dev',
+                    content='visited=1',
+                    condition='id=2'
+                )
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -191,7 +295,21 @@ class MySQL():
             self.select_all(table, msg)
     
 
-    def delete(self, table, condition, msg=''):
+    def delete(self, table: str, condition: str, msg: str = '') -> None:
+        """
+        删除数据
+        :param table: 数据表的名称
+        :param condition: 查询的条件
+        :param msg: 运行时打印的提示信息
+
+        用法 ::
+
+            >>> db.delete(
+                    table='bottles_dev',
+                    condition='id=3'
+                )
+
+        """
         if not self.is_connect:
             print(self.wrong_msg)
             
@@ -209,13 +327,13 @@ class MySQL():
 
 if __name__ == '__main__':
     my_sql = MySQL(
-        host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com',
-        user='lovely_pig',
-        password='xu164D1=',
-        database='drift-bottle-in-space',
+        host=os.getenv('HOST'),
+        user=os.getenv('USER'),
+        password=os.getenv('PASSWORD'),
+        database='drift-bottle-in-space'
     )
     my_sql.table_info(table='test')
     my_sql.select_all(table='test')
-    my_sql.insert(table='test', fiels='(test_title, test_date)', values='("测试", NOW())')
+    my_sql.insert(table='test', fields='(test_title, test_date)', values='("测试", NOW())')
     my_sql.update(table='test', content='test_title="学习Python"', condition='test_id=7')
     my_sql.delete(table='test', condition='test_id=8')
