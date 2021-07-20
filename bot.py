@@ -32,15 +32,15 @@ class MyBot(Wechaty):
         self.send_bottle_msg = ''
         # 获取云数据库
         self.db = mysql.MySQL(
-            host='rm-2zez51ep111kfuz320o.mysql.rds.aliyuncs.com',
-            user='lovely_pig',
-            password='xu164D1=',
+            host=os.getenv('HOST'),
+            user=os.getenv('USER'),
+            password=os.getenv('PASSWORD'),
             database='drift-bottle-in-space'
         )
         # 获取云存储
         self.bucket = oss.OSS(
-            access_key_id='LTAI5tJ2PUZYmkHNn4eHpneZ',
-            access_key_secret='0vGAt1YBjlS2VHFCyu9rFYaA62u758',
+            access_key_id=os.getenv('ACCESS_KEY_ID'),
+            access_key_secret=os.getenv('ACCESS_KEY_SECRET'),
             bucket_name='drift-bottle-in-space',
             endpoint='https://oss-cn-beijing.aliyuncs.com',
         )
@@ -66,8 +66,6 @@ class MyBot(Wechaty):
                     await conversation.say(self.bottle_msg)
                     time.sleep(self.sleep_time)
                     await conversation.say('发送太空漂流瓶请回复1，接收太空漂流瓶请回复2。')
-                    emoji = '<img class="emoji emoji1f63c" text="_web" src="/zh_CN/htmledition/v2/images/spacer.gif" />'
-                    await conversation.say(emoji)
                 
                 # 只有文本信息
                 if text == '不用了' and self.on_bottle_img_ready:
@@ -140,6 +138,7 @@ class MyBot(Wechaty):
                     )
                     time.sleep(self.sleep_time)
                     await conversation.say('接收到一个太空漂流瓶🛸')
+                    await conversation.say('文本消息图片消息')
                     if bottle_msg:
                         time.sleep(self.sleep_time)
                         await conversation.say(bottle_msg)
