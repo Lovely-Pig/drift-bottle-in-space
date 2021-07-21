@@ -6,9 +6,9 @@ import random
 import strings
 import asyncio
 import logging
-from typing import Optional, Union
+from typing import List, Optional, Union
 
-from wechaty_puppet import FileBox, ScanStatus  # type: ignore
+from wechaty_puppet import FileBox, ScanStatus
 
 from wechaty import Wechaty, Contact, Friendship
 from wechaty.user import Message, Room
@@ -28,6 +28,7 @@ class MyBot(Wechaty):
         self.hello_msg = '在六十世纪，地球🌏已不再适合人类生存，人们不得不生活在一个又一个太空飞船🚀里，在宇宙中🌌遨游，而同样遨游的还有各种各样的外星生物👽，太空漂流瓶🛸🛸是宇宙中交流的唯一途径，它承载着一些情感，在无边的宇宙中漂流，有些漂流瓶很幸运，会被某个有趣的灵魂收到📡，而有些漂流瓶则可能永远漂流在宇宙中。'
         self.on_bottle_msg_ready = False
         self.on_bottle_img_ready = False
+        self.developers: List[Contact] = []
         self.species = 'human'
         self.send_bottle_msg = ''
         # 获取云数据库
@@ -109,8 +110,25 @@ class MyBot(Wechaty):
                 if text == '2':
                     await self.get_bottle(conversation=from_contact)
 
+                # 添加开发者
+                if text == '我是开发者':
+                    conversation = from_contact
+                    await conversation.ready()
+                    if from_contact in self.developers:
+                        time.sleep(SLEEP_TIME)
+                        await conversation.say('您已经是开发者了，无须重复添加哦😉')
+                    else:
+                        self.developers.append(from_contact)
+                        time.sleep(SLEEP_TIME)
+                        await conversation.say('您已被添加为开发者，机器人的相关信息会及时向您汇报😁')
+
+
+
 
     async def say_hello(self, conversation: Contact):
+        """
+        机器人的自我介绍
+        """
         await conversation.ready()
         time.sleep(SLEEP_TIME)
         await conversation.say(self.hello_msg)
@@ -119,6 +137,20 @@ class MyBot(Wechaty):
 
 
     async def send_bottle(self, conversation: Contact, msg: Message, on_img: bool):
+        """
+        发送太空漂流瓶
+        :param conversation: 用户的contact
+        :param msg: 图片的msg
+        :param on_img: 是否发送图片
+
+        用法 ::
+
+            >>> # 只发送文本信息
+            >>> send_bottle(conversation=from_contact, msg=msg, on_img=False)
+            >>> # 发送文本和图片信息
+            >>> send_bottle(conversation=from_contact, msg=msg, on_img=True)
+
+        """
         self.on_bottle_img_ready = False
         await conversation.ready()
         time.sleep(SLEEP_TIME)
@@ -143,9 +175,15 @@ class MyBot(Wechaty):
         self.species = 'human'
         time.sleep(SLEEP_TIME)
         await conversation.say('发送成功🎉🎉🎉')
+        await self.report(msg='有一个用户成功发送了漂流瓶')
 
 
     async def get_bottle(self, conversation: Contact):
+        """
+        接收太空漂流瓶
+        :param conversation: 用户的contact
+
+        """
         await conversation.ready()
         time.sleep(SLEEP_TIME)
         await conversation.say('正在尝试接收📡太空漂流瓶🛸，请稍等.......')
@@ -154,6 +192,7 @@ class MyBot(Wechaty):
         if num < 5:
             time.sleep(SLEEP_TIME)
             await conversation.say('十分抱歉😭，飞船附近没有发现漂流瓶🛸')
+            await self.report(msg='有一个用户接收漂流瓶失败')
         else:
             bottle_msg, bottle_img = self.db.get_bottle(
                 table='bottles_dev',
@@ -172,12 +211,26 @@ class MyBot(Wechaty):
                 time.sleep(SLEEP_TIME)
                 await conversation.say(file_box)
                 os.remove(path=bottle_img)
+            
+            await self.report(msg='有一个用户接收漂流瓶成功')
+    
+    
+    async def report(self, msg: str):
+        """
+        向开发者报告一些信息
+        """
+        for conversation in self.developers:
+            await conversation.ready()
+            await conversation.say('尊敬的开发者，您有一条信息📝')
+            time.sleep(SLEEP_TIME)
+            await conversation.say(msg)
     
     
     async def on_friendship(self, friendship: Friendship):
         if friendship.hello() == '太空漂流瓶':
             await friendship.accept()
             await self.say_hello(conversation=friendship.contact())
+            await self.report(msg='新添加一个用户')
     
 
     async def on_login(self, contact: Contact):
