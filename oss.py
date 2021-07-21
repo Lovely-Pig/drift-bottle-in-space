@@ -1,6 +1,6 @@
 import os
-from typing import Optional
 import oss2
+from typing import Optional
 
 
 class OSS():
