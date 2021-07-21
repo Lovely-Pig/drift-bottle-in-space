@@ -116,7 +116,7 @@ class MySQL():
                 DESC {table};
             '''
             if not msg:
-                msg = '数据表的信息如下：'
+                msg = '数据表的结构如下：'
 
             self._run(table, sql, msg)
 
