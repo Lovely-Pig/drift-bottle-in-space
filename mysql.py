@@ -57,7 +57,7 @@ class MySQL():
 
         # 创建cursor对象
         cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
-        print('sql:', sql)
+        # print('sql:', sql)
 
         try:
             # 执行MySQL语句
@@ -206,7 +206,7 @@ class MySQL():
             >>> db.insert1(
                     table='bottles_dev',
                     fields='(species, owner, message, image)',
-                    values='("human", "九月的海风", "这是一条测试信息", "")'
+                    values='("human", "九月的海风", "这是另一条测试信息", "")'
                 )
 
         """
@@ -236,10 +236,10 @@ class MySQL():
 
         用法 ::
 
-            >>> db.insert1(
+            >>> db.insert2(
                     table='bottles_dev',
                     fields='(species, owner, message, image)',
-                    values='("alien", "细菌", "这是另一条测试信息", "")'
+                    values='("alien", "细菌", "这是一条测试信息", "")'
                 )
 
         """
@@ -326,14 +326,31 @@ class MySQL():
 
 
 if __name__ == '__main__':
-    my_sql = MySQL(
+    db = MySQL(
         host=os.getenv('HOST'),
         user=os.getenv('USER'),
         password=os.getenv('PASSWORD'),
         database='drift-bottle-in-space'
     )
-    my_sql.table_info(table='test')
-    my_sql.select_all(table='test')
-    my_sql.insert(table='test', fields='(test_title, test_date)', values='("测试", NOW())')
-    my_sql.update(table='test', content='test_title="学习Python"', condition='test_id=7')
-    my_sql.delete(table='test', condition='test_id=8')
+    db.table_info(table='bottles_dev')
+    db.select_all(table='bottles_dev')
+    db.insert1(
+        table='bottles_dev',
+        fields='(species, owner, message, image)',
+        values='("alien", "细菌", "这是一条测试信息", "")'
+    )
+    db.select_all(table='bottles_dev')
+    db.insert1(
+        table='bottles_dev',
+        fields='(species, owner, message, image)',
+        values='("human", "九月的海风", "这是另一条测试信息", "")'
+    )
+    db.update(
+        table='bottles_dev',
+        content='visited=1',
+        condition='id=2'
+    )
+    db.delete(
+        table='bottles_dev',
+        condition='id=1'
+    )
