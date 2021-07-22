@@ -222,7 +222,7 @@ class MyBot(Wechaty):
         向开发者报告一些信息
         """
         if self.developers:
-            all_contacts: List[Contact] = await Contact.find_all()
+            all_contacts: List[Contact] = await self.Contact.find_all()
             for contact in all_contacts:
                 print(contact.type())
             num_users = len([contact for contact in all_contacts if len(contact.contact_id) > 50])
