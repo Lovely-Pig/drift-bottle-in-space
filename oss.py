@@ -65,8 +65,8 @@ if __name__ == '__main__':
     bucket = OSS(
         access_key_id=os.getenv('ACCESS_KEY_ID'),
         access_key_secret=os.getenv('ACCESS_KEY_SECRET'),
-        bucket_name='drift-bottle-in-space',
-        endpoint='https://oss-cn-beijing.aliyuncs.com',
+        bucket_name=os.getenv('BUCKET_NAME'),
+        endpoint=os.getenv('ENDPOINT'),
     )
     # bucket.upload_img(dirname='bottles_dev/', filename='1.jpg')
     # bucket.download_img(dirname='bottles_dev/', filename='1.jpg')
