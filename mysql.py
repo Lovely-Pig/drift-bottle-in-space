@@ -57,7 +57,7 @@ class MySQL():
 
         # 创建cursor对象
         cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
-        # print('sql:', sql)
+        # print('sql:', sql)    # 方便调试
 
         try:
             # 执行MySQL语句
@@ -69,7 +69,7 @@ class MySQL():
             # 获取所有结果
             results = cursor.fetchall()
             _results = results[:]
-            print('results:', results)
+            # print('results:', results)    # 方便调试
 
             if results:
                 # 打印结果
