@@ -156,7 +156,7 @@ class MyBot(Wechaty):
         self.on_bottle_img_ready = False
         await conversation.ready()
         time.sleep(SLEEP_TIME)
-        await conversation.say('好的，正在准备发送太空漂流瓶🛸......')
+        await conversation.say('好的👌，正在准备发送太空漂流瓶🛸......')
         if not on_img:
             self.db.insert1(
                 table=TABLE,
