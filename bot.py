@@ -222,7 +222,7 @@ class MyBot(Wechaty):
         向开发者报告一些信息
         """
         if self.developers:
-            num_users = len(self.Contact.find_all())
+            num_users = len(await self.Contact.find_all())
             num_bottles = len(self.db.select_all(table=TABLE))
             for conversation in self.developers:
                 await conversation.ready()
