@@ -135,7 +135,7 @@ class MyBot(Wechaty):
         time.sleep(SLEEP_TIME)
         await conversation.say(self.hello_msg)
         time.sleep(SLEEP_TIME)
-        await conversation.say('发送太空漂流瓶请回复1️⃣，接收太空漂流瓶请回复2️⃣')
+        await conversation.say('发送太空漂流瓶请回复1️⃣\n接收太空漂流瓶请回复2️⃣')
 
 
     async def send_bottle(self, conversation: Contact, msg: Message, on_img: bool):
@@ -203,7 +203,7 @@ class MyBot(Wechaty):
             time.sleep(SLEEP_TIME)
             await conversation.say('接收到一个太空漂流瓶🛸')
             time.sleep(SLEEP_TIME)
-            await conversation.say(f'文本消息{"✅" if bottle_msg else "❎"} 图片消息{"✅" if bottle_img else "❎"}')
+            await conversation.say(f'文本消息 {"✅" if bottle_msg else "❎"}\n图片消息 {"✅" if bottle_img else "❎"}')
             if bottle_msg:
                 time.sleep(SLEEP_TIME)
                 await conversation.say(bottle_msg)
@@ -222,7 +222,10 @@ class MyBot(Wechaty):
         向开发者报告一些信息
         """
         if self.developers:
-            num_users = len(await self.Contact.find_all())
+            all_contacts: List[Contact] = await Contact.find_all()
+            for contact in all_contacts:
+                print(contact.type())
+            num_users = len([contact for contact in all_contacts if len(contact.contact_id) > 50])
             num_bottles = len(self.db.select_all(table=TABLE))
             for conversation in self.developers:
                 await conversation.ready()
