@@ -36,14 +36,14 @@ class MyBot(Wechaty):
             host=os.getenv('HOST'),
             user=os.getenv('USER'),
             password=os.getenv('PASSWORD'),
-            database='drift-bottle-in-space'
+            database=os.getenv('DATABASE')
         )
         # 获取云存储
         self.bucket = oss.OSS(
             access_key_id=os.getenv('ACCESS_KEY_ID'),
             access_key_secret=os.getenv('ACCESS_KEY_SECRET'),
-            bucket_name='drift-bottle-in-space',
-            endpoint='https://oss-cn-beijing.aliyuncs.com',
+            bucket_name=os.getenv('BUCKET_NAME'),
+            endpoint=os.getenv('ENDPOINT')
         )
 
 
