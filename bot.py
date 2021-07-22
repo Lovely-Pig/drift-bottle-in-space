@@ -223,8 +223,6 @@ class MyBot(Wechaty):
         """
         if self.developers:
             all_contacts: List[Contact] = await self.Contact.find_all()
-            for contact in all_contacts:
-                print(contact.type())
             num_users = len([contact for contact in all_contacts if len(contact.contact_id) > 50])
             num_bottles = len(self.db.select_all(table=TABLE))
             for conversation in self.developers:
