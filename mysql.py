@@ -121,6 +121,41 @@ class MySQL():
             self._run(table, sql, msg)
 
 
+    def create_table(self, table: str, msg: str = '') -> None:
+        """
+        创建表
+        :param table: 数据表的名称
+        :param msg: 运行时打印的提示信息
+
+        用法 ::
+
+            >>> db.create_table(table='bottles_dev')
+
+        """
+        if not self.is_connect:
+            print(self.wrong_msg)
+            
+        else:
+            # MySQL语句
+            sql = f'''
+                CREATE TABLE IF NOT EXISTS {table}(
+                    id INT UNSIGNED AUTO_INCREMENT,
+                    species TINYTEXT NOT NULL COMMENT 'human or alien',
+                    owner TINYTEXT NOT NULL COMMENT 'owner of the bottle',
+                    message TEXT, image TEXT COMMENT 'image path',
+                    visited TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'visited times',
+                    add_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    last_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id)
+                )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='information of drift bottles';
+            '''
+            if not msg:
+                msg = '数据表创建成功😊，表的结构如下：'
+
+            self._run(table, sql)
+            self.table_info(table, msg)
+
+    
     def select_all(self, table: str, msg: str = '') -> List[Dict]:
         """
         查询表的全部数据
@@ -330,9 +365,9 @@ if __name__ == '__main__':
         host=os.getenv('HOST'),
         user=os.getenv('USER'),
         password=os.getenv('PASSWORD'),
-        database='drift-bottle-in-space'
+        database=os.getenv('DATABASE')
     )
-    db.table_info(table='bottles_dev')
+    db.create_table(table='bottles_dev')
     db.select_all(table='bottles_dev')
     db.insert1(
         table='bottles_dev',
