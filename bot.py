@@ -25,7 +25,7 @@ class MyBot(Wechaty):
     """
     def __init__(self):
         super().__init__()
-        self.hello_msg = '在六十世纪，地球🌏已不再适合人类生存，人们不得不生活在一个又一个太空飞船🚀里，在宇宙中🌌遨游，而同样遨游的还有各种各样的外星生物👽，太空漂流瓶🛸🛸是宇宙中交流的唯一途径，它承载着一些情感，在无边的宇宙中漂流，有些漂流瓶很幸运，会被某个有趣的灵魂收到📡，而有些漂流瓶则可能永远漂流在宇宙中。'
+        self.hello_msg = '在六十世纪，地球🌏已不再适合人类生存，人们不得不生活在一个又一个太空飞船🚀里，在宇宙中🌌遨游，而同样遨游的还有各种各样的外星生物👽，太空漂流瓶🛸是宇宙中交流的唯一途径，它承载着一些情感，在无边的宇宙中漂流，有些漂流瓶很幸运，会被某个有趣的灵魂收到📡，而有些漂流瓶则可能永远漂流在宇宙中。'
         self.on_bottle_msg_ready = False
         self.on_bottle_img_ready = False
         self.developers: List[Contact] = []
@@ -90,7 +90,7 @@ class MyBot(Wechaty):
                     self.send_bottle_msg = text
                     await conversation.ready()
                     time.sleep(SLEEP_TIME)
-                    await conversation.say('配上一张精美的图片🖼🖼️🖼️🖼可以更好的表达此刻的心情哦😉，如不需要请回复不用了。')
+                    await conversation.say('配上一张精美的图片🖼️可以更好的表达此刻的心情哦😉，如不需要请回复不用了。')
                     
                 if text == '1':
                     conversation = from_contact
@@ -221,11 +221,12 @@ class MyBot(Wechaty):
         """
         向开发者报告一些信息
         """
-        for conversation in self.developers:
-            await conversation.ready()
-            await conversation.say('尊敬的开发者，您有一条信息📝')
-            time.sleep(SLEEP_TIME)
-            await conversation.say(msg)
+        if self.developers:
+            for conversation in self.developers:
+                await conversation.ready()
+                await conversation.say('尊敬的开发者，您有一条信息📝')
+                time.sleep(SLEEP_TIME)
+                await conversation.say(msg)
     
     
     async def on_friendship(self, friendship: Friendship):
