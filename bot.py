@@ -38,6 +38,8 @@ class MyBot(Wechaty):
             password=os.getenv('PASSWORD'),
             database=os.getenv('DATABASE')
         )
+        # 创建数据表
+        self.db.create_table(table='bottles_dev')
         # 获取云存储
         self.bucket = oss.OSS(
             access_key_id=os.getenv('ACCESS_KEY_ID'),
