@@ -171,7 +171,7 @@ class MyBot(Wechaty):
             )
             file_box = await msg.to_file_box()
             await file_box.to_file(file_path=filename)
-            self.bucket.upload_img(dirname=TABLE, filename=filename)
+            self.bucket.upload_img(dirname='bottles_dev/', filename=filename)
             os.remove(path=filename)
 
         self.species = 'human'
