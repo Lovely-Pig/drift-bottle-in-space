@@ -170,7 +170,7 @@ class MyBot(Wechaty):
                 values=f'("{self.species}", "{strings.check(conversation.name)}", "{strings.check(self.send_bottle_msg)}", "")'
             )
             file_box = await msg.to_file_box()
-            await file_box.to_file(file_path=filename)
+            await file_box.to_file(file_path=filename, overwrite=True)
             self.bucket.upload_img(dirname='bottles_dev/', filename=filename)
             os.remove(path=filename)
 
@@ -208,7 +208,7 @@ class MyBot(Wechaty):
                 time.sleep(SLEEP_TIME)
                 await conversation.say(bottle_msg)
             if bottle_img:
-                self.bucket.download_img(dirname=TABLE, filename=bottle_img)
+                self.bucket.download_img(dirname='bottles_dev/', filename=bottle_img)
                 file_box = FileBox.from_file(path=bottle_img)
                 time.sleep(SLEEP_TIME)
                 await conversation.say(file_box)
