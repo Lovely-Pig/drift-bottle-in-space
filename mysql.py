@@ -69,7 +69,7 @@ class MySQL():
             # 获取所有结果
             results = cursor.fetchall()
             _results = results[:]
-            # print('results:', results)    # 方便调试
+            print('results:', results)    # 方便调试
 
             if results:
                 # 打印结果
