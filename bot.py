@@ -35,10 +35,10 @@ class MyBot(Wechaty):
         self.send_bottle_msg = ''
         # 获取云数据库
         self.db = mysql.MySQL(
-            host=os.getenv('HOST'),
-            user=os.getenv('USER'),
-            password=os.getenv('PASSWORD'),
-            database=os.getenv('DATABASE')
+            host=os.getenv('DB_HOST'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            database=os.getenv('DB_DATABASE')
         )
         # 创建数据表
         self.db.create_table(table=TABLE)
@@ -46,8 +46,8 @@ class MyBot(Wechaty):
         self.bucket = oss.OSS(
             access_key_id=os.getenv('ACCESS_KEY_ID'),
             access_key_secret=os.getenv('ACCESS_KEY_SECRET'),
-            bucket_name=os.getenv('BUCKET_NAME'),
-            endpoint=os.getenv('ENDPOINT')
+            bucket_name=os.getenv('OSS_BUCKET_NAME'),
+            endpoint=os.getenv('OSS_ENDPOINT')
         )
 
 
